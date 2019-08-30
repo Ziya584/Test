@@ -1,39 +1,51 @@
 <?php
-define('ROOT', dirname(__FILE__));
+	/* Задание: написать скрипт который будет искать значение по ключу из данных полученных из обычного текстового файла. Реализовать поиск методом бинарного поиска. Бинарный поиск как я понимаю это если каждый раз делить по полам и отбросить не нужную часть. Допустим если мы ищем число 30 среи цифр от 0го до 100, то сначала делим 100 по полам и получаем 50. потом проверяем в какой половине нахидится искомое значение. т.к. 30 меньше 50ти, мы уже не ищем в диапазоне 50-100, потом 50 делим по полам и получаем 25, получается искомое значение между 25 и 50, поэтому мы прибавляем 25 на 50 и опять делим по полам. Получается 37,5, если округлим то получается 38. Т.к. до этой операции мы выяснили, что искомое значение больше, чем 25, следовательно сейчас мы рассмотрим интервал от 25 до 38. т.е. 25+38=63 далее 63/2 = 31,5.
+	25+32=57 57/2=28,5 29:31
+	29+31=60 60/2=30
+	*/
 
-function binarySearchByKey($file, $iskomoye_znacheniye){
-    $handle = fopen($file, "r");
-    while (!feof($handle)) {
-        $string = fgets($handle,4000);
-        mb_convert_encoding($string, 'cp1251');
-        $explodedstring = explode('\x0A', $string);
-        array_pop($explodedstring);
-        foreach ($explodedstring as $key => $value) {
-            $arr[] = explode('\t', $value);
-        }
 
-        $nachalo = 0;
-        $konec = count($arr)-1;
+	define('ROOT', dirname(__FILE__)); //определяем константу для корневой дирректории
 
-        while ($nachalo <= $konec) {
-            $poluchennaya_seredina = floor(($nachalo + $konec) / 2);
-            $strnatcmp = strnatcmp($arr[$poluchennaya_seredina][0],$iskomoye_znacheniye);
-            if ($strnatcmp > 0) {
-                $konec = $poluchennaya_seredina - 1;
-            } elseif ($strnatcmp < 0) {
-                $nachalo = $poluchennaya_seredina + 1;
-            } else {
-                return $arr[$poluchennaya_seredina][1];
-            }
-        }
-    }
-    return 'undef';
-}
-$iskomoye_znacheniye = 'ключ32';
-$file = ROOT.'/keynumeric.txt';
-echo binarySearchByKey($file, $iskomoye_znacheniye)."</br>";
-echo "Если искомый ключ не существует в файле: ";
-$iskomoye_znacheniye = 'ключ322';
-echo binarySearchByKey($file, $iskomoye_znacheniye)."</br>";
+	function binarySearchByKey($file, $iskomoye_znacheniye){
+		$handle = fopen($file, "r"); //открываем файл для чтения
+		while (!feof($handle)) { // пока не наступит конец файла
+			$string = fgets($handle,4000); // читаем данные по 4000 байт
+			mb_convert_encoding($string, 'cp1251'); // чтобы русские буквы не выглядели как кракозябры
+			$explodedstring = explode('\x0A', $string); // получается массив ключ\tзначение
+			// echo "<pre>";
+			// print_r($explodedstring);
+			array_pop($explodedstring); // удаляем последний элемент массива т.к. он получается пустым
+			foreach ($explodedstring as $key => $value) {
+				$arr[] = explode('\t', $value);// получаем массив в массиве, где ключ и значение отдельные элементы
+			}
+			// echo "<pre>";
+			// print_r($arr); // смотрим на результат массива
+			$nachalo = 0; // задаем начальное значение
+			$konec = count($arr)-1; // определяем конец. т.к. нулевой массив считается первым элементом вычитываем единицу
+
+			while ($nachalo <= $konec) { // цикл работает пока начальное значение не превышает или не становится равным конечной
+				$poluchennaya_seredina = floor(($nachalo + $konec) / 2); // определяем середину и округляем сразу же
+				$strnatcmp = strnatcmp($arr[$poluchennaya_seredina][0],$iskomoye_znacheniye); // сравниваем полученное с искомым
+
+				if ($strnatcmp > 0) {
+					$konec = $poluchennaya_seredina - 1; // присваиваем к конечному значению
+				} elseif ($strnatcmp < 0) {
+					$nachalo = $poluchennaya_seredina + 1; // присваиваем к начальному значению
+				} else {
+					return $arr[$poluchennaya_seredina][1]; // возвращаем значение по ключу
+				}
+			}
+		}
+		return 'undef'; // в случаем если в файле вообще нет искомого значения
+	}
+
+
+	$iskomoye_znacheniye = 'ключ64'; // дальше наверно всё понятно
+	$file = ROOT.'/keynumeric.txt';
+	echo binarySearchByKey($file, $iskomoye_znacheniye)."</br>";
+	echo "Если искомый ключ не существует в файле: ";
+	$iskomoye_znacheniye = 'ключ322';
+	echo binarySearchByKey($file, $iskomoye_znacheniye)."</br>";
 
 

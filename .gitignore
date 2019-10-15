@@ -1,2 +1,6 @@
 # phpstorm project files
 .idea
+
+#created file for testing
+test.txt
+

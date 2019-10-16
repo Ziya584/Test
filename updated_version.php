@@ -71,15 +71,15 @@
 		$file=new SplFileObject($fileName); // создаём объект файла
 		$start = 0; //назначили левую граница
 		$end = sizeof(file($fileName)) - 1; //вычисление правой границы, конца файла
-		echo "</br> End: ".$end. "</br>";
+//		echo "</br> End: ".$end. "</br>";
 		while ($start <= $end) { //условие выхода за границы
 			$position = floor(($start + $end) / 2);  //вычисление середины массива
 			$file->seek($position);//взятие строки с вычесленным номером
-			echo $position."</br>";
+//			echo $position."</br>";
 			$elem = explode("\t", $file->current());// разбиение строки на пару ключ:значение
 			$strnatcmp = strnatcmp($elem[0],$desiredValue); // сравниваем найденное значение с искомым
-			echo $elem[0]." : ";
-			echo $elem[1]."</br>";
+//			echo $elem[0]." : ";
+//			echo $elem[1]."</br>";
 
 			// strnatcmp функция возвращает отрицательное число, если str1 меньше,
 			// чем str2, положительное число, если str1 больше, чем str2, и 0 если строки равны.
